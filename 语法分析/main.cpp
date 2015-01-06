@@ -1,7 +1,7 @@
 /*
  * 语法分析器
  * 构造表达式部分的语法分析器
- * 请在文件结尾附加 "#"
+ * 可在文件结尾附加 "#"
  * 注：尚未实现条件语句的语法分析，因未解决二义性文法的问题
  * 作者：张泰然
  * 时间：2014-11-23
@@ -76,6 +76,7 @@ void Factor();
 int row = 1;						// 用来表示行号
 char token[WORDLEN];				// 用来依次存放一个单词词文中的各个字符
 map<string, int> keywords;			// 关键字表，在初始化函数中初始化
+bool foundSyntaxError = false;		// 用来表示是否已发现语法错误
 
 struct Word							// 单词结构体
 {
@@ -138,12 +139,12 @@ void report_error(string reason = "")
 }
 
 /*
-* 函数 void outToMem(int num, const char * val)
-* 参数：num  为相应单词的类别码或其助记符
-* 参数：val  当所识别的单词为标识符和整数时，为token（即词文分别为字母数字串和数字串），对于其余种类的单词，均为空串
-* 作用：输出一个单词的内部表示至内存
-* author: Zhang Tairan
-*/
+ * 函数 void outToMem(int num, const char * val)
+ * 参数：num  为相应单词的类别码或其助记符
+ * 参数：val  当所识别的单词为标识符和整数时，为token（即词文分别为字母数字串和数字串），对于其余种类的单词，均为空串
+ * 作用：输出一个单词的内部表示至内存
+ * author: Zhang Tairan
+ */
 void outToMem(int num, const char * val)
 {
 	Word newWord;
@@ -271,22 +272,22 @@ void scanner(const string &line, string::size_type &index)
 			}
 			break;
 		case '+':						// 算术运算符 +
-			out(PL, "");
+			out(PL, "+");
 			break;
 		case '-':						// 算术运算符 -
-			out(MI, "");
+			out(MI, "-");
 			break;
 		case '*':						// 算术运算符 *
-			out(MU, "");
+			out(MU, "*");
 			break;
 		case '/':						// 算术运算符 /
-			out(DI, "");
+			out(DI, "/");
 			break;
 		case '(':
-			out(LPAREN, "");
+			out(LPAREN, "(");
 			break;
 		case ')':
-			out(RPAREN, "");
+			out(RPAREN, ")");
 			break;
 		case '#':
 			out(STREND, "");
@@ -310,9 +311,13 @@ void read(Word &symbol)
 		
 }
 
-void syntax_error()
+void syntax_error(string reason = "")
 {
-
+	foundSyntaxError = true;
+	if (reason != "")
+		cerr << "发现语法错误" << " : " << reason << endl;
+	else
+		cerr << "发现语法错误！" << endl;
 }
 
 void Expression()
@@ -338,7 +343,14 @@ void ExpressionDetail()
 		return;
 	}
 	else
-		syntax_error();
+	{
+		string reason = "";
+		reason += "\"";
+		reason += symbol.value;
+		reason += "\"：";
+		reason += "此处应为加号、减号或右括号";
+		syntax_error(reason);
+	}
 }
 
 void Term()
@@ -360,7 +372,14 @@ void TermDetail()
 		return;
 	}
 	else
-		syntax_error();
+	{
+		string reason = "";
+		reason += "\"";
+		reason += symbol.value;
+		reason += "\"：";
+		reason += "此处应为四则运算符号或右括号";
+		syntax_error(reason);
+	}
 }
 
 void Factor()
@@ -377,9 +396,39 @@ void Factor()
 		{
 			read(symbol);
 		}
+		else
+		{
+			string reason = "";
+			if (symbol.type == STREND)
+			{
+				reason += "输入串结束处应输入右括号";
+			}
+			else
+			{
+				reason += "\"";
+				reason += symbol.value;
+				reason += "\"：";
+				reason += "此处应为右括号";
+			}
+			syntax_error(reason);
+		}
 	}
 	else
-		syntax_error();
+	{
+		string reason = "";
+		if (symbol.type == STREND)
+		{
+			reason += "输入串结束处应输入整数、标识符";
+		}
+		else
+		{
+			reason += "\"";
+			reason += symbol.value;
+			reason += "\"：";
+			reason += "此处应为整数、标识符或左括号";
+		}
+		syntax_error(reason);
+	}
 }
 
 /*
@@ -391,7 +440,7 @@ void syntaxAnalysis()
 {
 	read(symbol);
 	Expression();
-	if (symbol.type == STREND)
+	if (!foundSyntaxError && symbol.type == STREND)
 	{
 		cout << "语法正确!" << endl;
 	}
@@ -424,7 +473,7 @@ int main()
 			index--;					// 回溯，因为在非空白字符处判断时，即使因为是非空白字符而终止循环，index还是自增了
 			scanner(line, index);		// index传引用，在scanner中更改
 		}
-
+		out(STREND, "");				// 向每行单词集合的末尾追加一个输入串的结束符，用于方便结束分析
 		row++;
 	}
 	syntaxAnalysis();
