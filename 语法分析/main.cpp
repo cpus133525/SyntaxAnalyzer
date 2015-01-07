@@ -3,7 +3,7 @@
  * 构造表达式部分的语法分析器
  * 可在文件结尾附加 "#"
  * 注：尚未实现条件语句的语法分析，因未解决二义性文法的问题
- * 作者：张泰然
+ * 作者：Coffee Cat
  * 时间：2014-11-23
  * No copyright, you can modified it freely
  * And it's better to tell me your changes
@@ -91,7 +91,7 @@ Word symbol;						// 当前符号，语法分析用
 /*
  * 函数 void init()
  * 作用：初始化词法分析器
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void init()
 {
@@ -107,7 +107,7 @@ void init()
  * 参数：字符数组token
  * 作用：每调用一次，就以token中的字符串查保留字表
  * 返回值：若查到，就返回相应关键字的类别码，否则返回0
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 int lookup(const char * token)
 {
@@ -128,7 +128,7 @@ int lookup(const char * token)
  * 函数 void report_error()
  * 参数：reason  出错原因的描述 
  * 作用：报告出错的行数
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void report_error(string reason = "")
 {
@@ -143,7 +143,7 @@ void report_error(string reason = "")
  * 参数：num  为相应单词的类别码或其助记符
  * 参数：val  当所识别的单词为标识符和整数时，为token（即词文分别为字母数字串和数字串），对于其余种类的单词，均为空串
  * 作用：输出一个单词的内部表示至内存
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void outToMem(int num, const char * val)
 {
@@ -159,7 +159,7 @@ void outToMem(int num, const char * val)
  * 参数：num  为相应单词的类别码或其助记符
  * 参数：val  当所识别的单词为标识符和整数时，为token（即词文分别为字母数字串和数字串），对于其余种类的单词，均为空串
  * 作用：输出一个单词的内部表示，在词法分析实验中输出至控制台标准输出，在语法分析实验中输出至内存，作为接口函数
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void out(int num, const char * val)
 {
@@ -171,7 +171,7 @@ void out(int num, const char * val)
  * 参数：line  为待扫描的一行源代码
  * 参数：index 为当前扫描的字符的位置，即index的索引
  * 作用：进行扫描，对所读入的符号进行相应处理
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void scanner(const string &line, string::size_type &index)
 {
@@ -434,7 +434,7 @@ void Factor()
 /*
  * 函数 void syntaxAnalysis()
  * 作用：进行语法分析
- * author: Zhang Tairan
+ * author: Coffee Cat
  */
 void syntaxAnalysis()
 {
